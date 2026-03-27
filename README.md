@@ -1,69 +1,39 @@
-Llama-Diagram-Generator 🗂️
-A local, privacy-focused tool that transforms natural language descriptions into structured, interactive flowcharts. Built with FastAPI, React Flow, and Llama 3 (via Ollama).
+# Llama-Flow: Natural Language Diagramming 🧠⚡
 
-Why I built this
-Standard diagramming tools require manual dragging and dropping. I wanted a way to simply "describe" a system or a logic flow and have it rendered instantly. By running Llama 3 locally, the data never leaves your machine, making it ideal for sensitive architecture planning.
+A local-first architecture tool that transforms text descriptions into interactive, auto-layouted flowcharts. Powered by **Llama 3**, **FastAPI**, and **React Flow**.
 
-🚀 Features
-Natural Language to JSON: Uses Llama 3 to interpret logic and output React Flow compatible data.
+---
 
-Auto-Layout: Integrated with dagre to ensure nodes are never overlapping.
+## 📖 Overview
 
-Persistent Sessions: Multiple chat threads saved to localStorage.
+This project was born out of a simple frustration: manual diagramming is slow. **Llama-Flow** allows you to "talk" your architecture into existence. By combining the reasoning power of Llama 3 with the flexibility of React Flow, you can generate complex system designs in seconds, iterate on them via chat, and keep everything private on your local machine.
 
-Dynamic Styling: Change colors or shapes by simply asking the AI.
+## ✨ Key Features
 
-Local-First: No API keys required. Everything runs on your hardware.
+* **Natural Language to JSON:** Directly converts conversational prompts into structured React Flow data.
+* **Auto-Layout Engine:** Uses `dagre` to automatically position nodes, ensuring zero overlap and a clean hierarchy.
+* **Persistent Sessions:** Multiple chat sessions are saved to `localStorage`, allowing you to pick up where you left off.
+* **Context-Aware Iteration:** The AI remembers previous steps—ask it to "change that blue node to red" or "add a database after the auth step."
+* **Dark Mode UI:** A sleek, developer-centric interface designed for long sessions.
+* **Privacy-Centric:** No external APIs or data logging. Everything stays on your hardware.
 
-🛠️ Tech Stack
-Frontend: React, React Flow (XYFlow), Dagre (layout engine), Axios.
+---
 
-Backend: Python, FastAPI, Uvicorn.
+## 🛠️ Tech Stack
 
-AI Engine: Ollama running Llama 3.
+| Layer | Technology |
+| :--- | :--- |
+| **Frontend** | React, @xyflow/react, Dagre, Axios |
+| **Backend** | Python 3.9+, FastAPI, Uvicorn |
+| **LLM** | Llama 3 (via Ollama) |
+| **Styling** | Custom CSS / Dark Mode |
 
-⚙️ Initial Setup
-1. Prerequisites
-Node.js (v18+)
+---
 
-Python (3.9+)
+## ⚙️ Initial Setup
 
-Ollama: Download here
-
-2. Local AI Setup
-Once Ollama is installed, pull the Llama 3 model:
-
-Bash
+### 1. AI Engine (Ollama)
+You need **Ollama** installed and running. [Download it here](https://ollama.com/).
+Once installed, pull the model:
+```bash
 ollama pull llama3
-3. Backend Setup
-Navigate to the backend folder:
-
-Bash
-cd backend
-pip install fastapi uvicorn ollama pydantic
-# Run the server
-python -m uvicorn main:app --reload
-4. Frontend Setup
-Navigate to the frontend folder:
-
-Bash
-cd frontend
-npm install
-
-# Run the development server
-npm run dev
-📖 How to use
-Open your browser at http://localhost:5173.
-
-Start a New Project.
-
-Type a description like: "Create a login flow: User enters email -> Check if exists -> If no, go to Register. If yes, go to Password."
-
-Use the chat to iterate: "Make the Register node green" or "Add a step for 2FA."
-
-🗺️ Roadmap
-[ ] Export diagrams as PNG/SVG.
-
-[ ] Add support for custom node types (Database, Cloud icons).
-
-[ ] Drag-and-drop manual editing that syncs back to AI context.
