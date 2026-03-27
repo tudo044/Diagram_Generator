@@ -182,3 +182,7 @@
     border-right-color: var(--border);
   }
 }
+
+.react-flow__controls-button svg {
+  fill: #0f172a !important; /* A dark color to contrast with the light canvas */
+}

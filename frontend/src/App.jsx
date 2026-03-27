@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { ReactFlow, MiniMap, Controls, Background, applyNodeChanges, applyEdgeChanges } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import './App.css';
 import axios from 'axios';
 import dagre from 'dagre';
 
