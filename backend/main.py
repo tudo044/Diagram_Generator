@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import ollama
 import json
+import re
 
 app = FastAPI()
 
@@ -15,48 +16,35 @@ app.add_middleware(
 )
 
 class DiagramRequest(BaseModel):
-    prompt: str
+    history: list 
 
 @app.post("/api/generate-diagram")
 async def generate_diagram(request: DiagramRequest):
-    # ATENȚIE: Tot ce e mai jos are un TAB în față!
     system_prompt = """
-    You are an expert system architect and a React Flow JSON generator.
-    Convert the user's description into a React Flow JSON object. ONLY return valid JSON.
-    Use x:0, y:0 for all positions.
-
-    Format required:
+    You are an expert system architect. Return ONLY a valid JSON object. 
+    NO introduction, NO markdown, NO backticks.
+    
+    JSON STRUCTURE:
     {
-      "nodes": [
-        {
-          "id": "1",
-          "position": {"x": 0, "y": 0}, 
-          "data": {"label": "Node Name"},
-          "style": {"backgroundColor": "#4285F4", "color": "white", "borderRadius": "8px"}
-        }
-      ],
-      "edges": [
-        {"id": "e1-2", "source": "1", "target": "2", "label": "connection", "type": "smoothstep", "animated": true}
-      ]
+      "nodes": [{"id": "1", "data": {"label": "Name"}, "style": {"backgroundColor": "color"}, "position": {"x":0, "y":0}}],
+      "edges": [{"id": "e1-2", "source": "1", "target": "2", "label": "action", "animated": true}]
     }
+    
+    COLORS: Use the specific color requested by the user. If they say 'portocaliu', use 'orange' or '#ffa500'.
     """
 
     try:
-        response = ollama.chat(model='llama3', messages=[
-            {'role': 'system', 'content': system_prompt},
-            {'role': 'user', 'content': request.prompt}
-        ])
-
-        raw_content = response['message']['content']
-        start_idx = raw_content.find('{')
-        end_idx = raw_content.rfind('}')
-
-        if start_idx != -1 and end_idx != -1:
-            json_str = raw_content[start_idx:end_idx+1]
+        response = ollama.chat(model='llama3', messages=[{'role': 'system', 'content': system_prompt}] + request.history)
+        raw_content = response['message']['content'].strip()
+        
+        # Extragem DOAR ce este între primele și ultimele acolade (Regex robust)
+        match = re.search(r'\{.*\}', raw_content, re.DOTALL)
+        if match:
+            json_str = match.group(0)
             return json.loads(json_str)
-        else:
-            raise ValueError("Llama 3 nu a returnat JSON valid.")
-
+        
+        raise ValueError("AI didn't return a valid JSON block.")
     except Exception as e:
-        print(f"Eroare: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Backend Error: {e}")
+        # Returnăm o diagramă goală în caz de eroare, să nu crape frontend-ul
+        return {"nodes": [], "edges": []}
